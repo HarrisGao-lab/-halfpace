@@ -52,7 +52,12 @@ const PEAK_KM: Record<'half' | 'full', Record<Experience, number>> = {
 
 // Current weekly km by profile bucket
 const CURRENT_KM: Record<WeeklyKm, number> = {
-  zero: 8, low: 15, medium: 25, high: 38,
+  zero: 5, low: 14, medium: 24, high: 36,
+};
+
+// Max single easy-run distance by experience + phase (prevents "first run 6km" for beginners)
+const MAX_EASY_RUN: Record<WeeklyKm, number> = {
+  zero: 3.5, low: 6, medium: 10, high: 14,
 };
 
 // Max weekly ramp rate by experience
@@ -212,10 +217,13 @@ function buildSchedule(
 // ── Step 3: workout assignment ─────────────────────────────────────────────
 
 // Long run = 30–40% of weekly km, capped by race distance
-function calcLongRun(weekKm: number, phase: Phase | 'recovery', raceDistance: 'half' | 'full'): number {
+function calcLongRun(weekKm: number, phase: Phase | 'recovery', raceDistance: 'half' | 'full', weeklyKm: WeeklyKm): number {
   const max = raceDistance === 'half' ? 22 : 36;
+  // Zero-base runners: long run capped at 4km in base phase, grows slowly
+  const zeroMax = phase === 'base' ? 4 : phase === 'build' ? 8 : 14;
   const frac = phase === 'peak' ? 0.38 : phase === 'build' ? 0.34 : 0.30;
-  return Math.min(Math.round(weekKm * frac * 10) / 10, max);
+  const raw = Math.round(weekKm * frac * 10) / 10;
+  return Math.min(raw, weeklyKm === 'zero' ? zeroMax : max);
 }
 
 // Running days per week setting → which days of the week are active
@@ -229,9 +237,9 @@ function getRunDays(daysPerWeek: 3 | 4 | 5): number[] {
 // Workout descriptions pool
 const DESCS: Record<WorkoutType, string[]> = {
   easy: [
-    'Easy run — comfortable, conversational pace',
-    'Recovery run — very easy, let your legs loosen up',
-    'Easy aerobic run — if you can\'t chat, slow down',
+    'Easy run — go slow enough to hold a conversation',
+    'Short easy run — no pressure, any pace is fine',
+    'Easy jog — if you need to walk, walk. That\'s okay.',
   ],
   tempo: [
     '10 min easy warm-up + 20 min tempo + 10 min cool-down',
@@ -268,7 +276,7 @@ function assignWorkouts(
   raceDayIndex?: number, // 0=Mon
 ): GeneratedWorkout[] {
   const runDays = getRunDays(profile.daysPerWeek);
-  const longKm = calcLongRun(weekKm, phase, aRaceDistance);
+  const longKm = calcLongRun(weekKm, phase, aRaceDistance, profile.weeklyKm);
 
   // Decide which days get quality work
   const canInterval = (phase === 'build' || phase === 'peak') && profile.experience !== 'beginner';
@@ -329,12 +337,13 @@ function assignWorkouts(
       continue;
     }
 
-    // Easy run — distribute remaining km evenly across remaining easy days
+    // Easy run — distribute remaining km evenly across remaining easy days, capped for beginners
     const easyDaysLeft = runDays.filter(d => d >= day && d !== 5 && d !== intervalDay && d !== tempoDay && !(isRaceWeek && d === (raceDayIndex ?? 6))).length;
     const remainingKm = Math.max(weekKm - allocatedKm - longKm, 0);
-    const easyKm = easyDaysLeft > 0
-      ? Math.max(Math.round(remainingKm / easyDaysLeft * 10) / 10, 3)
-      : Math.max(Math.round(remainingKm * 10) / 10, 3);
+    const rawEasyKm = easyDaysLeft > 0
+      ? Math.max(Math.round(remainingKm / easyDaysLeft * 10) / 10, profile.weeklyKm === 'zero' ? 1.5 : 3)
+      : Math.max(Math.round(remainingKm * 10) / 10, profile.weeklyKm === 'zero' ? 1.5 : 3);
+    const easyKm = Math.min(rawEasyKm, MAX_EASY_RUN[profile.weeklyKm]);
 
     out.push({ day, type: 'easy', distanceKm: easyKm, description: desc('easy', day + weekNum), paceZone: 'easy' });
     allocatedKm += easyKm;
