@@ -1,7 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { PACE_ZONES, getTodayWorkout } from '@/lib/trainingPlan';
-import { getAdaptedPlan, loadProfile } from '@/lib/userProfile';
+import { PACE_ZONES } from '@/lib/trainingPlan';
+import { loadProfile } from '@/lib/userProfile';
+import { generatePlan, getCurrentWeekData, getTodayWorkoutFromPlan } from '@/lib/planEngine';
+import { loadRaces } from '@/lib/raceConfig';
 import { getActiveRace, getCurrentWeekNumber, formatTargetTime, type RaceConfig } from '@/lib/raceConfig';
 import { loadRuns, paceStr, durationStr, type RunEntry } from '@/lib/runLog';
 import { getTodayFeel, saveFeel, FEEL_META, type FeelScore } from '@/lib/bodyFeel';
@@ -16,7 +18,7 @@ const TYPE_LABEL: Record<string, string> = {
 };
 const TYPE_DOT: Record<string, string> = {
   easy: '#30d158', tempo: '#ff9f0a', interval: '#ff453a',
-  long: '#bf5af2', rest: 'rgba(255,255,255,0.08)', cross: '#32ade6',
+  long: '#bf5af2', rest: 'rgba(255,255,255,0.08)', cross: '#32ade6', race: '#FF6B35',
 };
 const DAY = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
@@ -47,9 +49,9 @@ export default function TodayPage() {
   if (!config) return null;
 
   const currentWeek = getCurrentWeekNumber(config);
-  const adaptedPlan = getAdaptedPlan(loadProfile());
-  const weekData = adaptedPlan[Math.min(currentWeek - 1, 19)];
-  const todayWorkout = getTodayWorkout();
+  const plan = generatePlan(loadProfile(), loadRaces());
+  const weekData = getCurrentWeekData(plan) ?? { totalKm: 0, phase: 'base', workouts: [] as never[] };
+  const todayWorkout = getTodayWorkoutFromPlan(plan);
   const zone = todayWorkout ? PACE_ZONES[todayWorkout.paceZone] : null;
   const todayIdx = (() => { const d = new Date().getDay(); return d === 0 ? 6 : d - 1; })();
 

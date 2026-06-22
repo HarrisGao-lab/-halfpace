@@ -2,7 +2,7 @@
 // Race config is loaded dynamically from raceConfig.ts
 
 export type Phase = 'base' | 'build' | 'peak' | 'taper';
-export type WorkoutType = 'easy' | 'tempo' | 'interval' | 'long' | 'rest' | 'cross';
+export type WorkoutType = 'easy' | 'tempo' | 'interval' | 'long' | 'rest' | 'cross' | 'race';
 
 export interface PaceZone {
   name: string;

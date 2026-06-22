@@ -1,25 +1,31 @@
 'use client';
 import { useState } from 'react';
-import { getCurrentWeek, getWeekStartDate, type Phase } from '@/lib/trainingPlan';
-import { getAdaptedPlan, loadProfile } from '@/lib/userProfile';
+import { type Phase } from '@/lib/trainingPlan';
+import { loadProfile } from '@/lib/userProfile';
+import { generatePlan, getCurrentWeekData, type GeneratedWeek } from '@/lib/planEngine';
+import { loadRaces } from '@/lib/raceConfig';
 import { ChevronDown, ChevronUp, Check } from 'lucide-react';
 
-const PHASE_COLOR: Record<Phase, string> = {
-  base: '#30d158', build: '#ff9f0a', peak: '#ff453a', taper: '#bf5af2',
+const PHASE_COLOR: Record<string, string> = {
+  base: '#30d158', build: '#ff9f0a', peak: '#ff453a', taper: '#bf5af2', recovery: '#32ade6',
 };
 const TYPE_DOT: Record<string, string> = {
   easy: '#30d158', tempo: '#ff9f0a', interval: '#ff453a',
-  long: '#bf5af2', rest: 'rgba(255,255,255,0.08)', cross: '#32ade6',
+  long: '#bf5af2', rest: 'rgba(255,255,255,0.08)', cross: '#32ade6', race: '#FF6B35',
 };
 const TYPE_LABEL: Record<string, string> = {
   easy: 'Easy', tempo: 'Tempo', interval: 'Interval',
-  long: 'Long', rest: 'Rest', cross: 'Cross',
+  long: 'Long', rest: 'Rest', cross: 'Cross', race: 'Race',
 };
 const DAY = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
 export default function PlanPage() {
-  const currentWeek = getCurrentWeek();
-  const TRAINING_PLAN = getAdaptedPlan(loadProfile());
+  const races = loadRaces();
+  const profile = loadProfile();
+  const TRAINING_PLAN: GeneratedWeek[] = generatePlan(profile, races);
+  const currentWeekData = getCurrentWeekData(TRAINING_PLAN);
+  const currentWeek = currentWeekData?.week ?? 1;
+  const activeRace = races[0]; // first upcoming race
   const [expanded, setExpanded] = useState<number>(currentWeek);
   const [done, setDone] = useState<Record<string, boolean>>(() => {
     if (typeof window === 'undefined') return {};
@@ -32,12 +38,12 @@ export default function PlanPage() {
     localStorage.setItem('completed_workouts', JSON.stringify(next));
   }
 
-  let lastPhase: Phase | null = null;
+  let lastPhase: string | null = null;
 
   return (
     <div style={{ color: '#fff' }}>
       <header className="px-5 safe-top pb-4">
-        <p className="label mb-1.5">20 Weeks · Sub 2:00</p>
+        <p className="label mb-1.5">{TRAINING_PLAN.length} Weeks{activeRace ? ` · ${activeRace.name}` : ''}</p>
         <h1 style={{ fontSize: 36, fontWeight: 800, letterSpacing: "-0.03em" }}>Training Plan</h1>
 
         {/* Phase legend */}
@@ -58,7 +64,7 @@ export default function PlanPage() {
           const showDivider = weekData.phase !== lastPhase;
           lastPhase = weekData.phase;
           const phaseColor = PHASE_COLOR[weekData.phase];
-          const wStart = getWeekStartDate(weekData.week);
+          const wStart = new Date(weekData.startDate);
           const wEnd = new Date(wStart); wEnd.setDate(wEnd.getDate() + 6);
           const fmt = (d: Date) => d.toLocaleDateString('en', { month: 'short', day: 'numeric' });
           const runs = weekData.workouts.filter(w => w.type !== 'rest' && w.type !== 'cross');
