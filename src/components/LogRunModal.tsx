@@ -1,7 +1,9 @@
 'use client';
 import { useState } from 'react';
 import { saveRun, estimateCalories } from '@/lib/runLog';
-import { getTodayWorkout } from '@/lib/trainingPlan';
+import { generatePlan, getTodayWorkoutFromPlan } from '@/lib/planEngine';
+import { loadProfile } from '@/lib/userProfile';
+import { loadRaces } from '@/lib/raceConfig';
 import { X, Check, Heart } from 'lucide-react';
 
 interface Props {
@@ -17,7 +19,7 @@ const RPE_LABELS: Record<number, string> = {
 };
 
 export default function LogRunModal({ onClose, onSaved, prefillKm }: Props) {
-  const todayWorkout = getTodayWorkout();
+  const todayWorkout = getTodayWorkoutFromPlan(generatePlan(loadProfile(), loadRaces()));
   const suggestedKm = prefillKm ?? (todayWorkout && todayWorkout.distanceKm > 0 ? todayWorkout.distanceKm : undefined);
 
   const today = new Date().toISOString().slice(0, 10);
@@ -76,8 +78,8 @@ export default function LogRunModal({ onClose, onSaved, prefillKm }: Props) {
       style={{ background: 'rgba(0,0,0,0.8)' }}
       onClick={e => e.target === e.currentTarget && onClose()}
     >
-      <div className="w-full max-w-md rounded-t-3xl px-5 pt-5 pb-10"
-        style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.07)' }}>
+      <div className="w-full max-w-md rounded-t-3xl px-5 pt-5 overflow-y-auto"
+        style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.07)', maxHeight: '90vh', paddingBottom: 'calc(env(safe-area-inset-bottom) + 32px)' }}>
         {/* Handle */}
         <div className="w-10 h-1 rounded-full mx-auto mb-5" style={{ background: '#2a2a2a' }} />
 
