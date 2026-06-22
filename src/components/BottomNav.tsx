@@ -14,7 +14,7 @@ const tabs = [
 export default function BottomNav() {
   const path = usePathname();
   return (
-    <div className="fixed bottom-0 left-0 right-0 flex justify-center pb-7 z-50 pointer-events-none">
+    <div className="fixed bottom-0 left-0 right-0 flex justify-center z-50 pointer-events-none" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 12px)' }}>
       <nav
         className="pointer-events-auto flex items-center gap-0.5 px-2.5 py-2.5 rounded-full"
         style={{

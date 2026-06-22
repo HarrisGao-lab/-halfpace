@@ -361,7 +361,7 @@ export default function TodayPage() {
         onClick={() => setShowModal(true)}
         className="fixed z-40 flex items-center gap-2 rounded-full"
         style={{
-          bottom: 96,
+          bottom: 'calc(env(safe-area-inset-bottom) + 96px)',
           right: 20,
           background: '#FF6B35',
           color: '#000',
