@@ -8,6 +8,8 @@ export interface RunEntry {
   rpe: number;           // 1–10
   heartRateAvg?: number; // bpm — optional, for Health API
   caloriesKcal?: number; // kcal — optional, estimated or from device
+  source?: 'manual' | 'strava';
+  stravaId?: number;
 }
 
 const KEY = 'runs_v1';
@@ -34,6 +36,10 @@ export function saveRun(entry: Omit<RunEntry, 'id'>): RunEntry {
 
 export function deleteRun(runId: string): void {
   const runs = loadRuns().filter(r => r.id !== runId);
+  localStorage.setItem(KEY, JSON.stringify(runs));
+}
+
+export function saveRunsDirect(runs: RunEntry[]): void {
   localStorage.setItem(KEY, JSON.stringify(runs));
 }
 

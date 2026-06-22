@@ -46,6 +46,12 @@ export default function Onboarding({ onDone }: Props) {
   }
 
   function finish() {
+    // Clear any stale race data so onboarding always starts fresh
+    localStorage.removeItem('races_v2');
+    localStorage.removeItem('active_race_id');
+    localStorage.removeItem('generated_plan_v1');
+    localStorage.removeItem('generated_plan_meta_v1');
+
     const race = addRace({
       name: raceName || 'My Race',
       date: raceDate || '2026-11-08',

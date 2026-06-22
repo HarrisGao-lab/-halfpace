@@ -1,6 +1,6 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useCallback, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   loadRaces, getActiveRaceId, setActiveRaceId, deleteRace, addRace,
   getDaysUntilRace, formatTargetTime, isRacePast,
@@ -10,25 +10,81 @@ import {
   loadNotifPrefs, saveNotifPrefs, requestPermission, getPermission,
   type NotifPrefs,
 } from '@/lib/notifications';
-import { Plus, ChevronRight, Check, Trash2, Bell, BellOff, Flag, HeartPulse, Medal, Download, Upload, Smartphone } from 'lucide-react';
+import { Plus, ChevronRight, Check, Trash2, Bell, BellOff, Flag, HeartPulse, Medal, Download, Upload, Smartphone, RefreshCw, Zap } from 'lucide-react';
 import { exportAllData, importAllData } from '@/lib/runLog';
+import {
+  isStravaConnected, getStravaToken, saveStravaToken, clearStravaToken,
+  getStravaAuthUrl, syncStravaRuns, type StravaToken,
+} from '@/lib/strava';
 import Link from 'next/link';
 
-export default function RacesPage() {
+function RacesPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [races, setRaces] = useState<RaceConfig[]>([]);
   const [activeId, setActiveId] = useState<string>('');
   const [deleting, setDeleting] = useState<string | null>(null);
   const [notif, setNotif] = useState<NotifPrefs>({ enabled: false, hour: 7, minute: 0 });
   const [permission, setPermission] = useState<NotificationPermission>('default');
   const [importMsg, setImportMsg] = useState('');
+  const [stravaConnected, setStravaConnected] = useState(false);
+  const [stravaAthlete, setStravaAthlete] = useState<string>('');
+  const [syncing, setSyncing] = useState(false);
+  const [syncMsg, setSyncMsg] = useState('');
 
   useEffect(() => {
     setRaces(loadRaces());
     setActiveId(getActiveRaceId());
     setNotif(loadNotifPrefs());
     setPermission(getPermission());
+    setStravaConnected(isStravaConnected());
+    const t = getStravaToken();
+    if (t) setStravaAthlete(t.athlete_name);
   }, []);
+
+  // Handle OAuth callback redirect — URL params from /api/strava/callback
+  useEffect(() => {
+    const status = searchParams.get('strava');
+    if (status === 'connected') {
+      const token: StravaToken = {
+        access_token: searchParams.get('access_token') ?? '',
+        refresh_token: searchParams.get('refresh_token') ?? '',
+        expires_at: parseInt(searchParams.get('expires_at') ?? '0'),
+        athlete_id: parseInt(searchParams.get('athlete_id') ?? '0'),
+        athlete_name: searchParams.get('athlete_name') ?? '',
+        athlete_avatar: searchParams.get('athlete_avatar') ?? '',
+      };
+      saveStravaToken(token);
+      setStravaConnected(true);
+      setStravaAthlete(token.athlete_name);
+      setSyncMsg('Strava connected! Tap Sync to import your runs.');
+      // Clean up URL
+      router.replace('/settings');
+    } else if (status === 'denied' || status === 'error') {
+      setSyncMsg('Could not connect to Strava. Please try again.');
+      router.replace('/settings');
+    }
+  }, [searchParams, router]);
+
+  async function handleStravaSync() {
+    setSyncing(true);
+    setSyncMsg('Syncing...');
+    try {
+      const { imported, skipped } = await syncStravaRuns();
+      setSyncMsg(`Imported ${imported} new run${imported !== 1 ? 's' : ''}${skipped > 0 ? ` · ${skipped} skipped` : ''}.`);
+    } catch (e) {
+      setSyncMsg(`Sync failed: ${(e as Error).message}`);
+    } finally {
+      setSyncing(false);
+    }
+  }
+
+  function handleStravaDisconnect() {
+    clearStravaToken();
+    setStravaConnected(false);
+    setStravaAthlete('');
+    setSyncMsg('');
+  }
 
   async function handleNotifToggle() {
     if (!notif.enabled) {
@@ -373,6 +429,58 @@ export default function RacesPage() {
           )}
         </div>
 
+        {/* Strava */}
+        <div className="mt-8">
+          <p className="text-[11px] tracking-[0.2em] uppercase mb-3" style={{ color: '#555' }}>Integrations</p>
+          <div className="rounded-2xl overflow-hidden" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.06)' }}>
+            {stravaConnected ? (
+              <>
+                <div className="flex items-center gap-3 px-4 py-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                  <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(252,76,2,0.15)' }}>
+                    <Zap size={15} style={{ color: '#FC4C02' }} />
+                  </div>
+                  <div className="flex-1">
+                    <div style={{ fontSize: 14, fontWeight: 600 }}>Strava</div>
+                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>
+                      Connected{stravaAthlete ? ` as ${stravaAthlete}` : ''}
+                    </div>
+                  </div>
+                  <button onClick={handleStravaDisconnect}
+                    style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', fontWeight: 600 }}>
+                    Disconnect
+                  </button>
+                </div>
+                <button onClick={handleStravaSync} disabled={syncing}
+                  className="flex items-center gap-3 px-4 py-4 w-full text-left">
+                  <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(252,76,2,0.1)' }}>
+                    <RefreshCw size={15} style={{ color: '#FC4C02', animation: syncing ? 'spin 1s linear infinite' : 'none' }} />
+                  </div>
+                  <div className="flex-1">
+                    <div style={{ fontSize: 14, fontWeight: 600 }}>{syncing ? 'Syncing…' : 'Sync Activities'}</div>
+                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>
+                      {syncMsg || 'Import your latest Strava runs'}
+                    </div>
+                  </div>
+                </button>
+              </>
+            ) : (
+              <button onClick={() => { window.location.href = getStravaAuthUrl(); }}
+                className="flex items-center gap-3 px-4 py-4 w-full text-left">
+                <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(252,76,2,0.15)' }}>
+                  <Zap size={15} style={{ color: '#FC4C02' }} />
+                </div>
+                <div className="flex-1">
+                  <div style={{ fontSize: 14, fontWeight: 600 }}>Connect Strava</div>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>
+                    {syncMsg || 'Auto-import your runs from Strava'}
+                  </div>
+                </div>
+                <ChevronRight size={15} style={{ color: 'rgba(255,255,255,0.2)' }} />
+              </button>
+            )}
+          </div>
+        </div>
+
         {/* Data & Health */}
         <div className="mt-8">
           <p className="text-[11px] tracking-[0.2em] uppercase mb-3" style={{ color: '#555' }}>Data & Backup</p>
@@ -425,5 +533,14 @@ export default function RacesPage() {
         <div className="pb-32" />
       </div>
     </div>
+  );
+}
+
+// useSearchParams requires Suspense boundary in Next.js App Router
+export default function SettingsPageWrapper() {
+  return (
+    <Suspense>
+      <RacesPage />
+    </Suspense>
   );
 }
