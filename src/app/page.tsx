@@ -98,7 +98,7 @@ export default function TodayPage() {
 
   return (
     <>
-      <div style={{ color: '#fff' }}>
+      <div className="h-screen overflow-y-auto" style={{ color: '#fff', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
         {/* Hero */}
         <header className="px-5 safe-top pb-8">
           <div className="flex items-start justify-between mb-6">
@@ -353,6 +353,7 @@ export default function TodayPage() {
           )}
 
         </div>
+        <div className="pb-32" />
       </div>
 
       {/* Floating Log Run button */}

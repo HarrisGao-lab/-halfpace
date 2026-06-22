@@ -108,7 +108,7 @@ export default function PacePage() {
   );
 
   return (
-    <div style={{ color: '#fff' }}>
+    <div className="h-screen overflow-y-auto" style={{ color: '#fff', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
       <header className="px-5 safe-top pb-6">
         <p className="label mb-2">Calculator</p>
         <h1 style={{ fontSize: 36, fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.05 }}>Pace Zones</h1>
@@ -277,7 +277,7 @@ export default function PacePage() {
             </div>
           ))}
         </div>
-
+        <div className="pb-32" />
       </div>
     </div>
   );

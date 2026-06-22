@@ -41,7 +41,7 @@ export default function PlanPage() {
   let lastPhase: string | null = null;
 
   return (
-    <div style={{ color: '#fff' }}>
+    <div className="h-screen overflow-y-auto" style={{ color: '#fff', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
       <header className="px-5 safe-top pb-4">
         <p className="label mb-1.5">{TRAINING_PLAN.length} Weeks{activeRace ? ` · ${activeRace.name}` : ''}</p>
         <h1 style={{ fontSize: 36, fontWeight: 800, letterSpacing: "-0.03em" }}>Training Plan</h1>
@@ -162,6 +162,7 @@ export default function PlanPage() {
             </div>
           );
         })}
+        <div className="pb-32" />
       </div>
     </div>
   );

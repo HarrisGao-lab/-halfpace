@@ -108,7 +108,7 @@ export default function RacesPage() {
   const sorted = [...races].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   return (
-    <div style={{ color: '#fff', minHeight: '100vh' }}>
+    <div className="h-screen overflow-y-auto" style={{ color: '#fff', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
       <header className="px-5 pt-14 pb-6 flex items-center justify-between">
         <div>
           <p className="text-[11px] tracking-[0.2em] uppercase mb-1" style={{ color: '#555' }}>Your Races</p>
@@ -422,7 +422,7 @@ export default function RacesPage() {
             </div>
           </div>
         </div>
-
+        <div className="pb-32" />
       </div>
     </div>
   );

@@ -46,7 +46,7 @@ export default function LogPage() {
 
   return (
     <>
-      <div>
+      <div className="h-screen overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
         <header className="px-5 pt-14 pb-6 flex items-end justify-between">
           <div>
             <p className="text-[11px] tracking-[0.2em] uppercase mb-1" style={{ color: '#555' }}>Training Log</p>
@@ -102,12 +102,12 @@ export default function LogPage() {
         </div>
 
         {runs.length === 0 ? (
-          <div className="text-center py-16 px-5">
+          <div className="text-center py-16 px-5 pb-32">
             <div className="text-5xl mb-4 opacity-20">🏃</div>
             <p className="text-sm" style={{ color: '#555' }}>No runs yet. Tap Log Run to add your first one.</p>
           </div>
         ) : tab === 'chart' ? (
-          <div className="px-5 space-y-8 pb-6">
+          <div className="px-5 space-y-8 pb-32">
             <div>
               <p className="text-[10px] uppercase tracking-[0.2em] mb-4" style={{ color: '#555' }}>Weekly Volume (km)</p>
               <ResponsiveContainer width="100%" height={150}>
@@ -141,7 +141,7 @@ export default function LogPage() {
             )}
           </div>
         ) : (
-          <div className="px-5 pb-6 space-y-2">
+          <div className="px-5 pb-32 space-y-2">
             {runs.map(r => {
               const isDeleting = deleting === r.id;
               return (
