@@ -2,7 +2,8 @@
 import { useState } from 'react';
 import { addRace, setActiveRaceId } from '@/lib/raceConfig';
 import { requestPermission, saveNotifPrefs } from '@/lib/notifications';
-import { ChevronRight, Bell, Flag, Timer } from 'lucide-react';
+import { saveProfile, type WeeklyKm, type DaysPerWeek, type Experience, WEEKLY_KM_LABELS, EXPERIENCE_LABELS } from '@/lib/userProfile';
+import { ChevronRight, Bell, Flag, Timer, Activity } from 'lucide-react';
 
 const ONBOARDED_KEY = 'onboarded_v1';
 
@@ -24,6 +25,9 @@ export default function Onboarding({ onDone }: Props) {
   const [distance, setDistance] = useState<'half' | 'full'>('half');
   const [targetH, setTargetH] = useState('2');
   const [targetM, setTargetM] = useState('0');
+  const [weeklyKm, setWeeklyKm] = useState<WeeklyKm>('zero');
+  const [daysPerWeek, setDaysPerWeek] = useState<DaysPerWeek>(4);
+  const [experience, setExperience] = useState<Experience>('beginner');
 
   const minDate = new Date();
   minDate.setDate(minDate.getDate() + 7);
@@ -50,11 +54,74 @@ export default function Onboarding({ onDone }: Props) {
       targetSeconds: 0,
     });
     setActiveRaceId(race.id);
+    saveProfile({ weeklyKm, daysPerWeek, experience });
     markOnboarded();
     onDone();
   }
 
   const steps = [
+    {
+      icon: <Activity size={28} style={{ color: '#FF6B35' }} />,
+      title: 'Your Fitness',
+      subtitle: 'We\'ll build a plan that fits where you are now',
+      content: (
+        <div className="space-y-5">
+          {/* Current weekly km */}
+          <div>
+            <div className="label mb-3">How much do you run right now?</div>
+            <div className="space-y-2">
+              {(['zero','low','medium','high'] as WeeklyKm[]).map(k => (
+                <button key={k} onClick={() => setWeeklyKm(k)}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left"
+                  style={{
+                    background: weeklyKm === k ? 'rgba(255,107,53,0.1)' : '#141414',
+                    border: weeklyKm === k ? '1px solid rgba(255,107,53,0.5)' : '1px solid rgba(255,255,255,0.06)',
+                  }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: weeklyKm === k ? '#FF6B35' : 'rgba(255,255,255,0.2)', flexShrink: 0 }} />
+                  <span style={{ fontSize: 13, color: weeklyKm === k ? '#fff' : 'rgba(255,255,255,0.5)' }}>{WEEKLY_KM_LABELS[k]}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Days per week */}
+          <div>
+            <div className="label mb-3">How many days can you train per week?</div>
+            <div className="flex gap-2">
+              {([3,4,5] as DaysPerWeek[]).map(d => (
+                <button key={d} onClick={() => setDaysPerWeek(d)}
+                  className="flex-1 py-3 rounded-xl font-bold"
+                  style={{
+                    background: daysPerWeek === d ? '#FF6B35' : '#141414',
+                    color: daysPerWeek === d ? '#000' : 'rgba(255,255,255,0.4)',
+                    fontSize: 15, border: '1px solid rgba(255,255,255,0.06)',
+                  }}>
+                  {d} days
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Experience */}
+          <div>
+            <div className="label mb-3">Race experience</div>
+            <div className="space-y-2">
+              {(['beginner','intermediate','experienced'] as Experience[]).map(e => (
+                <button key={e} onClick={() => setExperience(e)}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left"
+                  style={{
+                    background: experience === e ? 'rgba(255,107,53,0.1)' : '#141414',
+                    border: experience === e ? '1px solid rgba(255,107,53,0.5)' : '1px solid rgba(255,255,255,0.06)',
+                  }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: experience === e ? '#FF6B35' : 'rgba(255,255,255,0.2)', flexShrink: 0 }} />
+                  <span style={{ fontSize: 13, color: experience === e ? '#fff' : 'rgba(255,255,255,0.5)' }}>{EXPERIENCE_LABELS[e]}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      ),
+    },
     {
       icon: <Flag size={28} style={{ color: '#FF6B35' }} />,
       title: 'Your Race',

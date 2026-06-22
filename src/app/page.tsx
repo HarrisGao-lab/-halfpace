@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { TRAINING_PLAN, PACE_ZONES, getTodayWorkout } from '@/lib/trainingPlan';
+import { PACE_ZONES, getTodayWorkout } from '@/lib/trainingPlan';
+import { getAdaptedPlan, loadProfile } from '@/lib/userProfile';
 import { getActiveRace, getCurrentWeekNumber, formatTargetTime, type RaceConfig } from '@/lib/raceConfig';
 import { loadRuns, paceStr, durationStr, type RunEntry } from '@/lib/runLog';
 import { getTodayFeel, saveFeel, FEEL_META, type FeelScore } from '@/lib/bodyFeel';
@@ -46,7 +47,8 @@ export default function TodayPage() {
   if (!config) return null;
 
   const currentWeek = getCurrentWeekNumber(config);
-  const weekData = TRAINING_PLAN[Math.min(currentWeek - 1, 19)];
+  const adaptedPlan = getAdaptedPlan(loadProfile());
+  const weekData = adaptedPlan[Math.min(currentWeek - 1, 19)];
   const todayWorkout = getTodayWorkout();
   const zone = todayWorkout ? PACE_ZONES[todayWorkout.paceZone] : null;
   const todayIdx = (() => { const d = new Date().getDay(); return d === 0 ? 6 : d - 1; })();

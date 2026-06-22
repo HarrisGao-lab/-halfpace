@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { TRAINING_PLAN, getCurrentWeek, getWeekStartDate, type Phase } from '@/lib/trainingPlan';
+import { getCurrentWeek, getWeekStartDate, type Phase } from '@/lib/trainingPlan';
+import { getAdaptedPlan, loadProfile } from '@/lib/userProfile';
 import { ChevronDown, ChevronUp, Check } from 'lucide-react';
 
 const PHASE_COLOR: Record<Phase, string> = {
@@ -18,6 +19,7 @@ const DAY = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
 export default function PlanPage() {
   const currentWeek = getCurrentWeek();
+  const TRAINING_PLAN = getAdaptedPlan(loadProfile());
   const [expanded, setExpanded] = useState<number>(currentWeek);
   const [done, setDone] = useState<Record<string, boolean>>(() => {
     if (typeof window === 'undefined') return {};
