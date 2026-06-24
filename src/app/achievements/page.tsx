@@ -7,6 +7,13 @@ import {
   type Achievement, type AchievementInput,
 } from '@/lib/achievements';
 import Link from 'next/link';
+import * as LucideIcons from 'lucide-react';
+import type { LucideProps } from 'lucide-react';
+
+function AchievementIcon({ name, size, color }: { name: string; size: number; color: string }) {
+  const Icon = (LucideIcons as unknown as Record<string, React.ComponentType<LucideProps>>)[name];
+  return Icon ? <Icon size={size} color={color} /> : null;
+}
 
 const RARITY_LABEL = { common: 'Common', rare: 'Rare', epic: 'Epic', legendary: 'Legendary' };
 
@@ -96,8 +103,13 @@ export default function AchievementsPage() {
                   border: isUnlocked ? `1px solid ${color}33` : '1px solid #161616',
                   opacity: isUnlocked ? 1 : 0.55,
                 }}>
-                <div className="text-2xl" style={{ filter: isUnlocked ? 'none' : 'grayscale(1)' }}>
-                  {isUnlocked ? a.emoji : '🔒'}
+                <div className="w-8 h-8 rounded-xl flex items-center justify-center"
+                  style={{ background: isUnlocked ? `${color}20` : '#161616' }}>
+                  <AchievementIcon
+                    name={isUnlocked ? a.icon : 'Lock'}
+                    size={16}
+                    color={isUnlocked ? color : '#333'}
+                  />
                 </div>
                 <div>
                   <div className="text-xs font-bold leading-tight"

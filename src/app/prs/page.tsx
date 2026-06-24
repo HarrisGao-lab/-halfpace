@@ -102,7 +102,7 @@ export default function PRsPage() {
                         {new Date(pr.date).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric' })}
                         {' · '}
                         <span style={{ color: pr.source === 'manual' ? 'rgba(255,255,255,0.32)' : '#30d158' }}>
-                          {pr.source === 'manual' ? 'Manual entry' : 'Auto-detected ✓'}
+                          {pr.source === 'manual' ? 'Manual entry' : <span className="inline-flex items-center gap-0.5">Auto-detected <Check size={10} strokeWidth={3} /></span>}
                         </span>
                       </div>
                     </>

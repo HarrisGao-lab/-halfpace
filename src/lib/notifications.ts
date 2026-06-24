@@ -67,7 +67,7 @@ export function checkAndScheduleReminder(prefs: NotifPrefs, hasRunToday: boolean
   if (msUntilReminder <= 0 && !hasRunToday) {
     // Past reminder time, no run yet → fire now
     localStorage.setItem(LAST_NOTIF_KEY, todayKey);
-    showViaServiceWorker("Time to run! 🏃", "You have a workout scheduled today. Let's go!");
+    showViaServiceWorker("Time to run!", "You have a workout scheduled today. Let's go!");
   } else if (msUntilReminder > 0 && msUntilReminder < 24 * 60 * 60 * 1000) {
     // Schedule for later today
     setTimeout(() => {
@@ -77,7 +77,7 @@ export function checkAndScheduleReminder(prefs: NotifPrefs, hasRunToday: boolean
       const ranToday = latestRuns.some((r: { date: string }) => r.date === todayKey);
       if (!ranToday) {
         localStorage.setItem(LAST_NOTIF_KEY, todayKey);
-        showViaServiceWorker("Time to run! 🏃", "You have a workout scheduled today. Let's go!");
+        showViaServiceWorker("Time to run!", "You have a workout scheduled today. Let's go!");
       }
     }, msUntilReminder);
   }

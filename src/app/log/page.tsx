@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { loadRuns, deleteRun, paceStr, durationStr, weeklyStats, type RunEntry } from '@/lib/runLog';
 import LogRunModal from '@/components/LogRunModal';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
-import { Plus, Trash2, Trophy, Medal } from 'lucide-react';
+import { Plus, Trash2, Trophy, Medal, Activity } from 'lucide-react';
 import Link from 'next/link';
 
 const CHART_STYLE = { fontSize: 10, fill: '#444' };
@@ -103,7 +103,7 @@ export default function LogPage() {
 
         {runs.length === 0 ? (
           <div className="text-center py-16 px-5 pb-32">
-            <div className="text-5xl mb-4 opacity-20">🏃</div>
+            <Activity size={48} style={{ color: 'rgba(255,255,255,0.12)', marginBottom: 16 }} />
             <p className="text-sm" style={{ color: '#555' }}>No runs yet. Tap Log Run to add your first one.</p>
           </div>
         ) : tab === 'chart' ? (

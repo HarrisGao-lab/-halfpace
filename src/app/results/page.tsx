@@ -4,7 +4,7 @@ import {
   loadResults, saveResult, deleteResult, formatResultTime, DISTANCE_KM,
   type RaceResult, type ResultDistance,
 } from '@/lib/raceResults';
-import { Plus, Trash2, X, Check, Flag } from 'lucide-react';
+import { Plus, Trash2, X, Check, Flag, Medal } from 'lucide-react';
 import Link from 'next/link';
 
 const DISTANCES: ResultDistance[] = ['5K', '10K', 'Half', 'Full', 'Other'];
@@ -145,7 +145,7 @@ export default function ResultsPage() {
         {/* Results list */}
         {results.length === 0 && !adding && (
           <div className="text-center py-12" style={{ color: 'rgba(255,255,255,0.2)' }}>
-            <div className="text-4xl mb-2 opacity-30">🏅</div>
+            <Medal size={40} style={{ color: 'rgba(255,255,255,0.12)', marginBottom: 8 }} />
             <p className="text-sm">No results yet. Log your first official race.</p>
           </div>
         )}
@@ -179,7 +179,7 @@ export default function ResultsPage() {
                     )}
                   </div>
                   {r.placement && (
-                    <div className="text-xs mt-1" style={{ color: '#ff9f0a' }}>🏅 {r.placement}</div>
+                    <div className="text-xs mt-1 flex items-center gap-1" style={{ color: '#ff9f0a' }}><Medal size={10} />{r.placement}</div>
                   )}
                   {r.notes && (
                     <p className="text-xs mt-1.5 leading-relaxed" style={{ color: 'rgba(255,255,255,0.32)' }}>{r.notes}</p>

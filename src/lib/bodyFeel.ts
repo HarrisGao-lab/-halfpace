@@ -8,12 +8,12 @@ export interface BodyFeel {
 
 const KEY = 'body_feel_v1';
 
-export const FEEL_META: Record<FeelScore, { label: string; emoji: string; color: string }> = {
-  1: { label: 'Terrible',  emoji: '😫', color: '#ef4444' },
-  2: { label: 'Tired',     emoji: '😔', color: '#f97316' },
-  3: { label: 'Okay',      emoji: '😐', color: '#eab308' },
-  4: { label: 'Good',      emoji: '🙂', color: '#84cc16' },
-  5: { label: 'Great',     emoji: '😄', color: '#22c55e' },
+export const FEEL_META: Record<FeelScore, { label: string; icon: string; color: string }> = {
+  1: { label: 'Terrible', icon: 'FrownOpen', color: '#ef4444' },
+  2: { label: 'Tired',    icon: 'Frown',     color: '#f97316' },
+  3: { label: 'Okay',     icon: 'Meh',       color: '#eab308' },
+  4: { label: 'Good',     icon: 'Smile',     color: '#84cc16' },
+  5: { label: 'Great',    icon: 'SmilePlus', color: '#22c55e' },
 };
 
 export function loadFeels(): BodyFeel[] {

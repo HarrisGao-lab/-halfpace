@@ -183,7 +183,7 @@ function RacesPage() {
       <div className="px-5 pb-6 space-y-3">
         {sorted.length === 0 && (
           <div className="text-center py-12" style={{ color: '#444' }}>
-            <div className="text-4xl mb-3 opacity-30">🏁</div>
+            <Flag size={40} style={{ color: 'rgba(255,255,255,0.12)', marginBottom: 12 }} />
             <p className="text-sm">No races yet. Add your first one.</p>
           </div>
         )}

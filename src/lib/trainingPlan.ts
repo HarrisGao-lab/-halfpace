@@ -154,7 +154,7 @@ export const TRAINING_PLAN: TrainingWeek[] = [
   },
   {
     week: 4, phase: 'base', totalKm: 21,
-    weeklyGoal: '⚠️ Recovery week — drop ~10% mileage. Let adaptations set in.',
+    weeklyGoal: 'Recovery week — drop ~10% mileage. Let adaptations set in.',
     workouts: [
       w(0, 'easy', 5, 'Easy run', 'easy'),
       w(1, 'rest', 0, 'Rest', 'rest'),
@@ -221,7 +221,7 @@ export const TRAINING_PLAN: TrainingWeek[] = [
   },
   {
     week: 9, phase: 'build', totalKm: 28,
-    weeklyGoal: '⚠️ Recovery week. Absorb the last 3 weeks of quality work.',
+    weeklyGoal: 'Recovery week. Absorb the last 3 weeks of quality work.',
     workouts: [
       w(0, 'easy', 6, 'Easy run', 'easy'),
       w(1, 'rest', 0, 'Rest', 'rest'),
@@ -273,7 +273,7 @@ export const TRAINING_PLAN: TrainingWeek[] = [
   },
   {
     week: 13, phase: 'build', totalKm: 32,
-    weeklyGoal: '⚠️ Recovery week. Your body is adapting — protect it.',
+    weeklyGoal: 'Recovery week. Your body is adapting — protect it.',
     workouts: [
       w(0, 'easy', 7, 'Easy run', 'easy'),
       w(1, 'rest', 0, 'Rest', 'rest'),
@@ -308,7 +308,7 @@ export const TRAINING_PLAN: TrainingWeek[] = [
       w(2, 'interval', 10, '2km warm-up + 8×600m (75s rest) + cool-down', 'interval'),
       w(3, 'cross', 0, 'Cross training', 'cross'),
       w(4, 'easy', 8, 'Easy run', 'easy'),
-      w(5, 'long', 18, '🏆 Peak long run — last 8km at race pace', 'long'),
+      w(5, 'long', 18, 'Peak long run — last 8km at race pace', 'long'),
       w(6, 'rest', 0, 'Rest', 'rest'),
     ],
   },
@@ -327,7 +327,7 @@ export const TRAINING_PLAN: TrainingWeek[] = [
   },
   {
     week: 17, phase: 'peak', totalKm: 34,
-    weeklyGoal: '⚠️ Last recovery week before taper. Sleep, eat, rest.',
+    weeklyGoal: 'Last recovery week before taper. Sleep, eat, rest.',
     workouts: [
       w(0, 'easy', 7, 'Easy run', 'easy'),
       w(1, 'rest', 0, 'Rest', 'rest'),
@@ -368,7 +368,7 @@ export const TRAINING_PLAN: TrainingWeek[] = [
   },
   {
     week: 20, phase: 'taper', totalKm: 12,
-    weeklyGoal: '🏁 Race week! Stay calm, stay rested. You\'ve done the work.',
+    weeklyGoal: 'Race week! Stay calm, stay rested. You\'ve done the work.',
     workouts: [
       w(0, 'easy', 4, 'Easy run — shake out the legs', 'easy'),
       w(1, 'rest', 0, 'Rest', 'rest'),
@@ -376,7 +376,7 @@ export const TRAINING_PLAN: TrainingWeek[] = [
       w(3, 'rest', 0, 'Rest — hydrate, lay out gear', 'rest'),
       w(4, 'easy', 2, '2km very easy shakeout', 'easy'),
       w(5, 'rest', 0, 'Rest — early to bed!', 'rest'),
-      w(6, 'rest', 0, '🏁 RACE DAY — Half Marathon!', 'rest'),
+      w(6, 'rest', 0, 'RACE DAY — Half Marathon!', 'rest'),
     ],
   },
 ];

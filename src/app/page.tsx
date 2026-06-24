@@ -10,7 +10,11 @@ import { getTodayFeel, saveFeel, FEEL_META, type FeelScore } from '@/lib/bodyFee
 import Countdown from '@/components/Countdown';
 import LogRunModal from '@/components/LogRunModal';
 import Link from 'next/link';
-import { ChevronRight, Plus } from 'lucide-react';
+import { ChevronRight, Plus, Settings, Check, Droplets, Frown, Meh, Smile, type LucideProps } from 'lucide-react';
+
+const FEEL_ICONS: Record<string, React.ComponentType<LucideProps>> = {
+  FrownOpen: Frown, Frown, Meh, Smile, SmilePlus: Smile,
+};
 
 const TYPE_LABEL: Record<string, string> = {
   easy: 'Easy Run', tempo: 'Tempo Run', interval: 'Intervals',
@@ -117,7 +121,7 @@ export default function TodayPage() {
             <Link href="/settings"
               className="w-9 h-9 rounded-full flex items-center justify-center mt-1 shrink-0"
               style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
-              <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 15 }}>⚙</span>
+              <Settings size={15} style={{ color: 'rgba(255,255,255,0.35)' }} />
             </Link>
           </div>
 
@@ -234,7 +238,7 @@ export default function TodayPage() {
                       background: active ? 'rgba(255,255,255,0.06)' : 'transparent',
                       border: active ? `1px solid ${meta.color}40` : '1px solid transparent',
                     }}>
-                    <span style={{ fontSize: 20 }}>{meta.emoji}</span>
+                    {(() => { const Icon = FEEL_ICONS[meta.icon]; return Icon ? <Icon size={20} color={active ? meta.color : 'rgba(255,255,255,0.2)'} /> : null; })()}
                     <span style={{ fontSize: 9, marginTop: 4, fontWeight: 600, color: active ? meta.color : 'rgba(255,255,255,0.2)', letterSpacing: '0.06em' }}>
                       {meta.label}
                     </span>
@@ -289,7 +293,7 @@ export default function TodayPage() {
                       className="w-full flex items-center gap-3 py-2 text-left">
                       <div className="w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition-all"
                         style={{ borderColor: done ? '#30d158' : 'rgba(255,255,255,0.08)', background: done ? '#30d158' : 'transparent' }}>
-                        {done && <span style={{ color: '#000', fontSize: 10, fontWeight: 800 }}>✓</span>}
+                        {done && <Check size={10} color="#000" strokeWidth={3} />}
                       </div>
                       <span className="text-sm" style={{ color: done ? 'rgba(255,255,255,0.2)' : '#fff', textDecoration: done ? 'line-through' : 'none' }}>
                         {item}
@@ -342,7 +346,7 @@ export default function TodayPage() {
           {todayWorkout?.type === 'long' && (
             <div className="flex items-center gap-3 px-4 py-4 rounded-2xl"
               style={{ background: '#0a0a0a', border: '1px solid rgba(50,173,230,0.2)' }}>
-              <span style={{ fontSize: 18 }}>💧</span>
+              <Droplets size={18} style={{ color: '#32ade6', flexShrink: 0 }} />
               <div>
                 <p style={{ fontSize: 13, fontWeight: 700 }}>Long Run Fuel</p>
                 <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>

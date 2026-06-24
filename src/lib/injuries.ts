@@ -41,10 +41,10 @@ export const BODY_GROUPS: { label: string; zones: BodyZone[] }[] = [
 
 export type Severity = 1 | 2 | 3;
 
-export const SEVERITY_META: Record<Severity, { label: string; color: string; emoji: string }> = {
-  1: { label: 'Mild',     color: '#ff9f0a', emoji: '🟡' },
-  2: { label: 'Moderate', color: '#f97316', emoji: '🟠' },
-  3: { label: 'Severe',   color: '#ef4444', emoji: '🔴' },
+export const SEVERITY_META: Record<Severity, { label: string; color: string }> = {
+  1: { label: 'Mild',     color: '#ff9f0a' },
+  2: { label: 'Moderate', color: '#f97316' },
+  3: { label: 'Severe',   color: '#ef4444' },
 };
 
 export interface InjuryEntry {

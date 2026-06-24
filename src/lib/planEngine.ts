@@ -258,7 +258,7 @@ const DESCS: Record<WorkoutType, string[]> = {
   ],
   rest: ['Rest / light stretching or yoga', 'Rest — full recovery', 'Active recovery: 20 min walk or foam rolling'],
   cross: ['Cross-training 30–45 min — cycling, swimming, or yoga', 'Low-impact cardio 30 min', 'Strength & mobility work'],
-  race: ['Race Day 🏁 — warm up 15 min, race your plan, cool down 10 min'],
+  race: ['Race Day — warm up 15 min, race your plan, cool down 10 min'],
 };
 
 function desc(type: WorkoutType, seed: number): string {
@@ -382,7 +382,7 @@ const GOAL_COPY: Record<Phase | 'recovery', string[]> = {
 };
 
 function weeklyGoal(phase: Phase | 'recovery', raceWeek: boolean, weekNum: number): string {
-  if (raceWeek) return 'Race week — stay loose, trust your training. You\'ve earned this. 🏁';
+  if (raceWeek) return 'Race week — stay loose, trust your training. You\'ve earned this.';
   const pool = GOAL_COPY[phase] ?? GOAL_COPY.base;
   return pool[weekNum % pool.length];
 }

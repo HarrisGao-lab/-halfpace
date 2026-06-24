@@ -5,7 +5,7 @@ import {
   BODY_GROUPS, ZONE_LABELS, SEVERITY_META,
   type BodyZone, type Severity, type InjuryEntry,
 } from '@/lib/injuries';
-import { Plus, Trash2, X, Check } from 'lucide-react';
+import { Plus, Trash2, X, Check, Stethoscope } from 'lucide-react';
 import Link from 'next/link';
 
 export default function InjuryPage() {
@@ -134,7 +134,7 @@ export default function InjuryPage() {
                         color: severity === s ? meta.color : 'rgba(255,255,255,0.32)',
                         border: severity === s ? `1px solid ${meta.color}44` : '1px solid transparent',
                       }}>
-                      {meta.emoji} {meta.label}
+                      <span className="w-2 h-2 rounded-full inline-block" style={{ background: meta.color }} /> {meta.label}
                     </button>
                   );
                 })}
@@ -211,7 +211,7 @@ export default function InjuryPage() {
 
         {entries.length === 0 && !adding && (
           <div className="text-center py-10" style={{ color: 'rgba(255,255,255,0.2)' }}>
-            <div className="text-3xl mb-2 opacity-30">🩺</div>
+            <Stethoscope size={36} style={{ color: 'rgba(255,255,255,0.12)', marginBottom: 8 }} />
             <p className="text-sm">No entries yet. Log pain early to prevent overuse injuries.</p>
           </div>
         )}
