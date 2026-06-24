@@ -1,13 +1,13 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Calendar, BarChart2, Timer, Settings } from 'lucide-react';
+import { Home, Calendar, BarChart2, Brain, Settings } from 'lucide-react';
 
 const tabs = [
   { href: '/',         icon: Home      },
   { href: '/plan',     icon: Calendar  },
   { href: '/log',      icon: BarChart2 },
-  { href: '/pace',     icon: Timer     },
+  { href: '/insights', icon: Brain     },
   { href: '/settings', icon: Settings  },
 ];
 
@@ -26,7 +26,7 @@ export default function BottomNav() {
         }}
       >
         {tabs.map(({ href, icon: Icon }) => {
-          const active = path === href;
+          const active = path === href || (href === '/insights' && path.startsWith('/insights'));
           return (
             <Link
               key={href}

@@ -10,7 +10,10 @@ import { getTodayFeel, saveFeel, FEEL_META, type FeelScore } from '@/lib/bodyFee
 import Countdown from '@/components/Countdown';
 import LogRunModal from '@/components/LogRunModal';
 import Link from 'next/link';
-import { ChevronRight, Plus, Settings, Check, Droplets, Frown, Meh, Smile, type LucideProps } from 'lucide-react';
+import { ChevronRight, Plus, Settings, Check, Droplets, Frown, Meh, Smile, Brain, type LucideProps } from 'lucide-react';
+import { getCurrentLoad, formLabel } from '@/lib/trainingLoad';
+import { predictRaceTimes } from '@/lib/predictions';
+import { generateInsights } from '@/lib/insights';
 
 const FEEL_ICONS: Record<string, React.ComponentType<LucideProps>> = {
   FrownOpen: Frown, Frown, Meh, Smile, SmilePlus: Smile,
@@ -99,6 +102,16 @@ export default function TodayPage() {
   }
 
   const recentRuns = runs.slice(0, 3);
+
+  // Training load + insights (computed inline for home page preview)
+  const load = runs.length >= 3 ? getCurrentLoad(runs) : null;
+  const form = load ? formLabel(load.tsb) : null;
+  const topInsight = runs.length >= 3
+    ? generateInsights(runs, config, null)[0]
+    : null;
+  const racePred = runs.length >= 3 ? predictRaceTimes(runs).find(p =>
+    p.distance === (config.distance === 'full' ? 'Full' : 'Half')
+  ) : null;
 
   return (
     <>
@@ -303,6 +316,49 @@ export default function TodayPage() {
                 })}
               </div>
             </div>
+          )}
+
+          {/* Intelligence row: Form + Predicted time */}
+          {(form || racePred) && (
+            <div className="grid grid-cols-2 gap-3">
+              {form && load && (
+                <Link href="/insights"
+                  className="rounded-2xl p-3.5 flex flex-col"
+                  style={{ background: '#0a0a0a', border: `1px solid ${form.color}22` }}>
+                  <p className="text-[9px] tracking-widest uppercase mb-1.5" style={{ color: '#555' }}>Form</p>
+                  <div className="text-base font-bold" style={{ color: form.color }}>{form.label}</div>
+                  <div className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.25)' }}>TSB {load.tsb}</div>
+                </Link>
+              )}
+              {racePred && (
+                <Link href="/insights"
+                  className="rounded-2xl p-3.5 flex flex-col"
+                  style={{ background: '#0a0a0a', border: '1px solid rgba(255,107,53,0.15)' }}>
+                  <p className="text-[9px] tracking-widest uppercase mb-1.5" style={{ color: '#555' }}>Predicted</p>
+                  <div className="text-base font-bold" style={{ color: '#FF6B35' }}>{racePred.predictedFormatted}</div>
+                  <div className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.25)' }}>{config.distance === 'full' ? 'Full' : 'Half'} Marathon</div>
+                </Link>
+              )}
+            </div>
+          )}
+
+          {/* Coach insight teaser */}
+          {topInsight && (
+            <Link href="/insights"
+              className="flex items-center gap-3 rounded-2xl px-4 py-3.5"
+              style={{ background: '#0a0a0a', border: `1px solid ${topInsight.color}22` }}>
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background: `${topInsight.color}18` }}>
+                <Brain size={14} style={{ color: topInsight.color }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-xs font-bold" style={{ color: topInsight.color }}>{topInsight.title}</div>
+                <div className="text-[11px] truncate mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                  {topInsight.body}
+                </div>
+              </div>
+              <ChevronRight size={14} style={{ color: '#444', flexShrink: 0 }} />
+            </Link>
           )}
 
           {/* Recent Runs */}

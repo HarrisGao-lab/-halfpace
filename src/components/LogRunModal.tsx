@@ -1,10 +1,11 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { saveRun, estimateCalories } from '@/lib/runLog';
 import { generatePlan, getTodayWorkoutFromPlan } from '@/lib/planEngine';
 import { loadProfile } from '@/lib/userProfile';
 import { loadRaces } from '@/lib/raceConfig';
-import { X, Check, Heart } from 'lucide-react';
+import { activeShoes, assignRunToShoe, type Shoe } from '@/lib/shoes';
+import { X, Check, Heart, Footprints } from 'lucide-react';
 
 interface Props {
   onClose: () => void;
@@ -31,6 +32,12 @@ export default function LogRunModal({ onClose, onSaved, prefillKm }: Props) {
   const [hr, setHr] = useState('');
   const [notes, setNotes] = useState('');
   const [showHr, setShowHr] = useState(false);
+  const [shoes, setShoes] = useState<Shoe[]>([]);
+  const [selectedShoe, setSelectedShoe] = useState<string>('');
+
+  useEffect(() => {
+    setShoes(activeShoes());
+  }, []);
 
   const totalMin = parseInt(hours || '0') * 60 + parseInt(minutes || '0');
   const distKm = parseFloat(km) || 0;
@@ -47,7 +54,7 @@ export default function LogRunModal({ onClose, onSaved, prefillKm }: Props) {
   function handleSave() {
     if (!distKm || !totalMin) return;
     const hrNum = hr ? parseInt(hr) : undefined;
-    saveRun({
+    const saved = saveRun({
       date,
       startTime: `${date}T${new Date().toTimeString().slice(0, 8)}`,
       distanceKm: distKm,
@@ -57,6 +64,9 @@ export default function LogRunModal({ onClose, onSaved, prefillKm }: Props) {
       caloriesKcal: calories ?? undefined,
       notes,
     });
+    if (selectedShoe && saved.id) {
+      assignRunToShoe(saved.id, selectedShoe);
+    }
     onSaved();
     onClose();
   }
@@ -175,6 +185,35 @@ export default function LogRunModal({ onClose, onSaved, prefillKm }: Props) {
                 style={{ ...inputStyle, WebkitAppearance: 'none' as const }} />
             )}
           </div>
+
+          {/* Shoe selector */}
+          {shoes.length > 0 && (
+            <div>
+              <label className="label mb-2 block">Shoe (optional)</label>
+              <div className="flex flex-wrap gap-2">
+                <button onClick={() => setSelectedShoe('')}
+                  className="px-3 py-1.5 rounded-xl text-xs font-semibold"
+                  style={{
+                    background: selectedShoe === '' ? 'rgba(255,255,255,0.08)' : '#141414',
+                    color: selectedShoe === '' ? '#fff' : 'rgba(255,255,255,0.3)',
+                    border: '1px solid rgba(255,255,255,0.07)',
+                  }}>
+                  No shoe
+                </button>
+                {shoes.map(s => (
+                  <button key={s.id} onClick={() => setSelectedShoe(s.id)}
+                    className="px-3 py-1.5 rounded-xl text-xs font-semibold"
+                    style={{
+                      background: selectedShoe === s.id ? `${s.color}20` : '#141414',
+                      color: selectedShoe === s.id ? s.color : 'rgba(255,255,255,0.3)',
+                      border: `1px solid ${selectedShoe === s.id ? s.color + '44' : 'rgba(255,255,255,0.07)'}`,
+                    }}>
+                    {s.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Notes */}
           <div>

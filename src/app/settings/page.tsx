@@ -10,7 +10,7 @@ import {
   loadNotifPrefs, saveNotifPrefs, requestPermission, getPermission,
   type NotifPrefs,
 } from '@/lib/notifications';
-import { Plus, ChevronRight, Check, Trash2, Bell, BellOff, Flag, HeartPulse, Medal, Download, Upload, Smartphone, RefreshCw, Zap } from 'lucide-react';
+import { Plus, ChevronRight, Check, Trash2, Bell, BellOff, Flag, HeartPulse, Medal, Download, Upload, Smartphone, RefreshCw, Zap, Footprints } from 'lucide-react';
 import { exportAllData, importAllData } from '@/lib/runLog';
 import {
   isStravaConnected, getStravaToken, saveStravaToken, clearStravaToken,
@@ -342,13 +342,25 @@ function RacesPage() {
               <ChevronRight size={15} style={{ color: '#444' }} />
             </Link>
             <Link href="/achievements"
-              className="flex items-center gap-3 px-4 py-4">
+              className="flex items-center gap-3 px-4 py-4"
+              style={{ borderBottom: '1px solid #1a1a1a' }}>
               <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: '#ff9f0a20' }}>
                 <Medal size={15} style={{ color: '#ff9f0a' }} />
               </div>
               <div className="flex-1">
                 <div className="text-sm font-semibold">Achievements</div>
                 <div className="text-xs" style={{ color: '#555' }}>Milestones & badges</div>
+              </div>
+              <ChevronRight size={15} style={{ color: '#444' }} />
+            </Link>
+            <Link href="/shoes"
+              className="flex items-center gap-3 px-4 py-4">
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: 'rgba(255,107,53,0.12)' }}>
+                <Footprints size={15} style={{ color: '#FF6B35' }} />
+              </div>
+              <div className="flex-1">
+                <div className="text-sm font-semibold">Shoe Tracker</div>
+                <div className="text-xs" style={{ color: '#555' }}>Track mileage per shoe pair</div>
               </div>
               <ChevronRight size={15} style={{ color: '#444' }} />
             </Link>
