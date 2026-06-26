@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { loadRuns, deleteRun, paceStr, durationStr, weeklyStats, type RunEntry } from '@/lib/runLog';
 import LogRunModal from '@/components/LogRunModal';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
-import { Plus, Trash2, Trophy, Medal, Activity } from 'lucide-react';
+import { Plus, Trash2, Trophy, Medal, Activity, Share2 } from 'lucide-react';
 import Link from 'next/link';
 
 const CHART_STYLE = { fontSize: 10, fill: '#444' };
@@ -164,6 +164,9 @@ export default function LogPage() {
                         {r.notes ? ` · ${r.notes}` : ''}
                       </div>
                     </div>
+                    <Link href={`/share/${r.id}`} className="p-1" style={{ color: '#444' }}>
+                      <Share2 size={14} />
+                    </Link>
                     <button onClick={() => setDeleting(isDeleting ? null : r.id)}
                       style={{ color: isDeleting ? '#ef4444' : '#333' }}>
                       <Trash2 size={15} />
