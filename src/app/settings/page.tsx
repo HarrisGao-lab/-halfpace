@@ -239,7 +239,7 @@ function RacesPage() {
                     )}
                   </div>
                   <div className="text-xs mt-0.5" style={{ color: '#555' }}>
-                    {new Date(race.date).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    {race.date.replace(/-/g, '/')}
                     {' · '}
                     {race.distance === 'half' ? 'Half' : 'Full'} Marathon
                     {' · '}

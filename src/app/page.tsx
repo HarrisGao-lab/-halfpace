@@ -127,7 +127,7 @@ export default function TodayPage() {
                 {config.name}
               </h1>
               <p className="mt-2" style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.01em' }}>
-                {new Date(config.date).toLocaleDateString('en', { month: 'long', day: 'numeric', year: 'numeric' })}
+                {config.date.replace(/-/g, '/')}
                 <span style={{ color: '#FF6B35', marginLeft: 6 }}>→ {formatTargetTime(config)}</span>
               </p>
             </div>

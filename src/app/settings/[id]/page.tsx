@@ -89,7 +89,7 @@ export default function EditRacePage() {
             <div>
               <div className="text-lg font-bold">{config.name || 'My Race'}</div>
               <div className="text-sm mt-0.5" style={{ color: '#555' }}>
-                {new Date(config.date).toLocaleDateString('en', { month: 'long', day: 'numeric', year: 'numeric' })}
+                {config.date.replace(/-/g, '/')}
               </div>
             </div>
             <div className="text-right">
